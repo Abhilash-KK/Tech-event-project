@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechFest Registration Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- Load jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <h1>Nexus TechFest 2026</h1>
+            <p>Discover, connect, and participate in the future of tech.</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Events Section -->
+        <section id="events-section">
+            <h2>Available Events</h2>
+            <div id="events-container" class="events-grid">
+                <!-- Event cards will be populated here via AJAX -->
+                <div class="loading-spinner">Loading events...</div>
+            </div>
+        </section>
+
+        <!-- Participants Section -->
+        <section id="participants-section">
+            <h2>Recent Registrations</h2>
+            <div class="participants-list">
+                <ul id="participants-ul">
+                    <!-- Participants list will be populated here -->
+                </ul>
+                <div id="no-participants-msg" style="display: none; text-align: center; color: #a0aec0; padding: 20px;">
+                    No registrations yet. Be the first!
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Registration Modal -->
+    <div id="registration-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-header">
+                <h3 id="modal-event-title">Register for Event</h3>
+                <p id="modal-event-seats" class="seats-badge">Seats: <span></span></p>
+            </div>
+            
+            <form id="registration-form">
+                <input type="hidden" id="event_id" name="event_id">
+                <input type="hidden" id="event_name" name="event_name">
+                
+                <div class="form-group">
+                    <label for="participant_name">Full Name</label>
+                    <input type="text" id="participant_name" name="name" placeholder="John Doe" required>
+                    <span class="error-msg" id="name-error"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="participant_email">Email Address</label>
+                    <input type="email" id="participant_email" name="email" placeholder="john@example.com" required>
+                    <span class="error-msg" id="email-error"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="participant_phone">Phone Number</label>
+                    <input type="tel" id="participant_phone" name="phone" placeholder="1234567890" pattern="[0-9]{10}" required title="Please enter a 10-digit phone number">
+                    <span class="error-msg" id="phone-error"></span>
+                </div>
+
+                <button type="submit" id="submit-registration-btn" class="btn primary-btn full-width">
+                    Confirm Registration
+                </button>
+            </form>
+            <div id="form-success-message" class="hidden success-msg">
+                🎉 Registration Successful!
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast hidden"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>

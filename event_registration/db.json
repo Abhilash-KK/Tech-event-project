@@ -1,0 +1,49 @@
+{
+  "events": [
+    {
+      "id": "1",
+      "title": "AI & Machine Learning Hackathon",
+      "date": "2026-04-15",
+      "time": "10:00 AM",
+      "location": "Main Auditorium",
+      "description": "Build innovative AI models in 24 hours. Great prizes and networking!",
+      "total_seats": 50,
+      "available_seats": 2,
+      "image": "https://images.unsplash.com/photo-1517433670287-03ee82451be6?auto=format&fit=crop&q=80&w=800&h=400"
+    },
+    {
+      "id": "2",
+      "title": "Web3 & Blockchain Summit",
+      "date": "2026-04-16",
+      "time": "02:00 PM",
+      "location": "Conference Room A",
+      "description": "Explore the future of decentralized web and smart contracts.",
+      "total_seats": 100,
+      "available_seats": 100,
+      "image": "https://images.unsplash.com/photo-1639762681485-074b7f4ec651?auto=format&fit=crop&q=80&w=800&h=400"
+    },
+    {
+      "id": "3",
+      "title": "Cybersecurity Capture The Flag",
+      "date": "2026-04-17",
+      "time": "11:00 AM",
+      "location": "Lab 3B",
+      "description": "Test your hacking skills in our intensive CTF competition.",
+      "total_seats": 30,
+      "available_seats": 0,
+      "image": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&q=80&w=800&h=400"
+    },
+    {
+      "id": "4",
+      "title": "Cloud Computing Workshop",
+      "date": "2026-04-18",
+      "time": "09:30 AM",
+      "location": "Virtual Seminar",
+      "description": "Learn to deploy scalable applications using AWS and Azure.",
+      "total_seats": 200,
+      "available_seats": 15,
+      "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=800&h=400"
+    }
+  ],
+  "participants": []
+}
