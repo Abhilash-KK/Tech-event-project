@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +10,7 @@
     <!-- Load jQuery -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
+
 <body>
     <header class="app-header">
         <div class="header-content">
@@ -20,7 +22,19 @@
     <main class="container">
         <!-- Events Section -->
         <section id="events-section">
-            <h2>Available Events</h2>
+            <div id="events-controls" class="filter-controls">
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="event-search" placeholder="Search events by name or location...">
+                </div>
+                <div class="filter-box">
+                    <select id="event-filter">
+                        <option value="all">All Events</option>
+                        <option value="available">Available Only</option>
+                        <option value="full">Sold Out</option>
+                    </select>
+                </div>
+            </div>
             <div id="events-container" class="events-grid">
                 <!-- Event cards will be populated here via AJAX -->
                 <div class="loading-spinner">Loading events...</div>
@@ -49,11 +63,11 @@
                 <h3 id="modal-event-title">Register for Event</h3>
                 <p id="modal-event-seats" class="seats-badge">Seats: <span></span></p>
             </div>
-            
+
             <form id="registration-form">
                 <input type="hidden" id="event_id" name="event_id">
                 <input type="hidden" id="event_name" name="event_name">
-                
+
                 <div class="form-group">
                     <label for="participant_name">Full Name</label>
                     <input type="text" id="participant_name" name="name" placeholder="John Doe" required>
@@ -68,7 +82,8 @@
 
                 <div class="form-group">
                     <label for="participant_phone">Phone Number</label>
-                    <input type="tel" id="participant_phone" name="phone" placeholder="1234567890" pattern="[0-9]{10}" required title="Please enter a 10-digit phone number">
+                    <input type="tel" id="participant_phone" name="phone" placeholder="1234567890" pattern="[0-9]{10}"
+                        required title="Please enter a 10-digit phone number">
                     <span class="error-msg" id="phone-error"></span>
                 </div>
 
@@ -82,9 +97,22 @@
         </div>
     </div>
 
+    <!-- Custom Confirmation Modal -->
+    <div id="delete-confirm-modal" class="modal-overlay hidden">
+        <div class="modal-content mini-modal">
+            <h3>Delete Registration?</h3>
+            <p>Are you sure you want to remove this participant? This action will restore 1 seat to the event.</p>
+            <div class="modal-actions">
+                <button id="cancel-delete-btn" class="btn secondary-btn">Cancel</button>
+                <button id="confirm-delete-btn" class="btn danger-btn">Yes, Delete</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Notification -->
     <div id="toast" class="toast hidden"></div>
 
     <script src="script.js"></script>
 </body>
+
 </html>

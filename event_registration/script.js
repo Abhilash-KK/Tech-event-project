@@ -146,6 +146,7 @@ $(document).ready(function () {
             type: 'GET',
             dataType: 'json',
             success: function (data) {
+                window.allEvents = data; // Store for filtering
                 renderEvents(data);
             },
             error: function (err) {
@@ -153,6 +154,29 @@ $(document).ready(function () {
                 $('#events-container').html('<div class="error-msg">Failed to load events.</div>');
             }
         });
+    }
+
+    // Event Search & Filter
+    $('#event-search, #event-filter').on('input change', function () {
+        filterAndRenderEvents();
+    });
+
+    function filterAndRenderEvents() {
+        const searchTerm = $('#event-search').val().toLowerCase();
+        const filterVal = $('#event-filter').val();
+
+        const filtered = window.allEvents.filter(event => {
+            const matchesSearch = event.title.toLowerCase().includes(searchTerm) ||
+                event.location.toLowerCase().includes(searchTerm);
+
+            const matchesFilter = filterVal === 'all' ||
+                (filterVal === 'available' && event.available_seats > 0) ||
+                (filterVal === 'full' && event.available_seats === 0);
+
+            return matchesSearch && matchesFilter;
+        });
+
+        renderEvents(filtered);
     }
 
     // 2. Render Events
@@ -379,8 +403,8 @@ $(document).ready(function () {
     function addParticipantToUI(participant, prepend = true) {
         $('#no-participants-msg').hide();
         const dateString = new Date(participant.timestamp).toLocaleString();
-        const li = `
-            <li class="participant-item" data-id="${participant.id}" data-event-id="${participant.eventId}">
+        const li = $(`
+            <li class="participant-item" data-id="${participant.id}" data-event-id="${participant.eventId}" style="opacity: 0; transform: translateY(10px)">
                 <div class="participant-info">
                     <span class="participant-name">${participant.name}</span>
                     <span class="participant-event">Registered for: ${participant.eventName}</span>
@@ -390,38 +414,69 @@ $(document).ready(function () {
                     <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
                 </button>
             </li>
-        `;
+        `);
+
         if (prepend) $('#participants-ul').prepend(li);
         else $('#participants-ul').append(li);
+
+        // Animate in
+        setTimeout(() => {
+            li.css({
+                'opacity': '1',
+                'transform': 'translateY(0)',
+                'transition': 'all 0.4s ease-out'
+            });
+        }, 50);
     }
 
-    // 8. Delete Registration Logic
+    // 8. Delete Registration Logic (Custom Modal)
+    let participantToDelete = null;
+
     $('#participants-ul').on('click', '.delete-participant-btn', function () {
         const li = $(this).closest('.participant-item');
-        const participantId = li.data('id');
-        const eventId = li.data('event-id');
+        participantToDelete = {
+            li: li,
+            id: li.data('id'),
+            eventId: li.data('event-id')
+        };
+        $('#delete-confirm-modal').removeClass('hidden');
+    });
 
-        if (confirm('Are you sure you want to delete this registration?')) {
-            $.ajax({
-                url: `${API_URL}/participants/${participantId}`,
-                type: 'DELETE',
-                success: function () {
-                    li.fadeOut(300, function () {
-                        $(this).remove();
-                        if ($('#participants-ul li').length === 0) {
-                            $('#no-participants-msg').fadeIn();
-                        }
-                    });
+    $('#cancel-delete-btn').on('click', function () {
+        $('#delete-confirm-modal').addClass('hidden');
+        participantToDelete = null;
+    });
 
-                    // Restore the seat
-                    updateEventSeats(eventId, true);
-                    showToast('Registration deleted successfully', 'success');
-                },
-                error: function () {
-                    showToast('Failed to delete registration', 'error');
-                }
-            });
-        }
+    $('#confirm-delete-btn').on('click', function () {
+        if (!participantToDelete) return;
+
+        const { li, id, eventId } = participantToDelete;
+        const btn = $(this);
+        btn.prop('disabled', true).text('Deleting...');
+
+        $.ajax({
+            url: `${API_URL}/participants/${id}`,
+            type: 'DELETE',
+            success: function () {
+                li.fadeOut(300, function () {
+                    $(this).remove();
+                    if ($('#participants-ul li').length === 0) {
+                        $('#no-participants-msg').fadeIn();
+                    }
+                });
+
+                updateEventSeats(eventId, true);
+                showToast('Registration deleted successfully', 'success');
+                $('#delete-confirm-modal').addClass('hidden');
+            },
+            error: function () {
+                showToast('Failed to delete registration', 'error');
+            },
+            complete: function () {
+                btn.prop('disabled', false).text('Yes, Delete');
+                participantToDelete = null;
+            }
+        });
     });
 
     function showToast(message, type = 'success') {
