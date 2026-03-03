@@ -110,6 +110,19 @@ $(document).ready(function () {
                     dfd.resolve(sorted);
                 }
             }
+            else if (options.url.match(/\/participants\/.+$/)) {
+                if (options.type === 'DELETE') {
+                    const id = options.url.split('/').pop();
+                    const index = participants.findIndex(p => p.id === id);
+                    if (index !== -1) {
+                        const removed = participants.splice(index, 1)[0];
+                        saveState();
+                        dfd.resolve(removed);
+                    } else {
+                        dfd.reject({ status: 404, statusText: 'Participant not found' });
+                    }
+                }
+            }
             else {
                 // Fallback to real ajax if not matched (unlikely here)
                 originalAjax(options).then(dfd.resolve, dfd.reject);
@@ -318,17 +331,26 @@ $(document).ready(function () {
     }
 
     // 6. Update Event Seats via AJAX
-    function updateEventSeats(eventId) {
+    function updateEventSeats(eventId, increment = false) {
         $.ajax({
             url: `${API_URL}/events/${eventId}`,
             type: 'GET',
             success: function (eventData) {
-                const newSeats = eventData.available_seats - 1;
+                let newSeats;
+                if (increment) {
+                    newSeats = eventData.available_seats + 1;
+                    // Cap at total_seats
+                    newSeats = Math.min(eventData.total_seats, newSeats);
+                } else {
+                    newSeats = eventData.available_seats - 1;
+                    newSeats = Math.max(0, newSeats);
+                }
+
                 $.ajax({
                     url: `${API_URL}/events/${eventId}`,
                     type: 'PATCH',
                     contentType: 'application/json',
-                    data: JSON.stringify({ available_seats: Math.max(0, newSeats) }),
+                    data: JSON.stringify({ available_seats: newSeats }),
                     success: function () {
                         fetchEvents();
                     }
@@ -358,17 +380,49 @@ $(document).ready(function () {
         $('#no-participants-msg').hide();
         const dateString = new Date(participant.timestamp).toLocaleString();
         const li = `
-            <li class="participant-item">
+            <li class="participant-item" data-id="${participant.id}" data-event-id="${participant.eventId}">
                 <div class="participant-info">
                     <span class="participant-name">${participant.name}</span>
                     <span class="participant-event">Registered for: ${participant.eventName}</span>
                 </div>
                 <div class="participant-time">${dateString}</div>
+                <button class="delete-participant-btn" title="Delete Registration">
+                    <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                </button>
             </li>
         `;
         if (prepend) $('#participants-ul').prepend(li);
         else $('#participants-ul').append(li);
     }
+
+    // 8. Delete Registration Logic
+    $('#participants-ul').on('click', '.delete-participant-btn', function () {
+        const li = $(this).closest('.participant-item');
+        const participantId = li.data('id');
+        const eventId = li.data('event-id');
+
+        if (confirm('Are you sure you want to delete this registration?')) {
+            $.ajax({
+                url: `${API_URL}/participants/${participantId}`,
+                type: 'DELETE',
+                success: function () {
+                    li.fadeOut(300, function () {
+                        $(this).remove();
+                        if ($('#participants-ul li').length === 0) {
+                            $('#no-participants-msg').fadeIn();
+                        }
+                    });
+
+                    // Restore the seat
+                    updateEventSeats(eventId, true);
+                    showToast('Registration deleted successfully', 'success');
+                },
+                error: function () {
+                    showToast('Failed to delete registration', 'error');
+                }
+            });
+        }
+    });
 
     function showToast(message, type = 'success') {
         const toast = $('#toast');

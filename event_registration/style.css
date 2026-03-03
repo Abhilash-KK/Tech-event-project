@@ -44,7 +44,7 @@ body {
     left: -50%;
     width: 200%;
     height: 200%;
-    background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 50%);
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 50%);
     z-index: 0;
 }
 
@@ -113,7 +113,7 @@ section {
 .event-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
-    border-color: rgba(99,102,241,0.3);
+    border-color: rgba(99, 102, 241, 0.3);
 }
 
 .card-img-container {
@@ -176,7 +176,7 @@ section {
     align-items: center;
     margin-top: auto;
     padding-top: 1rem;
-    border-top: 1px solid rgba(255,255,255,0.05);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .seats-info {
@@ -397,7 +397,7 @@ input.error {
     justify-content: space-between;
     align-items: center;
     padding: 1rem 1.5rem;
-    background: rgba(255,255,255,0.03);
+    background: rgba(255, 255, 255, 0.03);
     border-radius: 12px;
     border-left: 4px solid var(--primary-color);
     transition: transform 0.2s;
@@ -406,12 +406,19 @@ input.error {
 
 .participant-item:hover {
     transform: translateX(5px);
-    background: rgba(255,255,255,0.05);
+    background: rgba(255, 255, 255, 0.05);
 }
 
 @keyframes slideIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .participant-info {
@@ -433,6 +440,39 @@ input.error {
 .participant-time {
     font-size: 0.8rem;
     color: #64748b;
+    margin-right: 1.5rem;
+}
+
+.delete-participant-btn {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--danger);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.delete-participant-btn:hover {
+    background: var(--danger);
+    color: white;
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.delete-participant-btn:active {
+    transform: scale(0.95);
+}
+
+.delete-participant-btn svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
 }
 
 /* Toast */
@@ -445,7 +485,7 @@ input.error {
     color: white;
     font-weight: 500;
     z-index: 2000;
-    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
     transform: translateY(100px);
     opacity: 0;
     transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
@@ -456,8 +496,13 @@ input.error {
     opacity: 1;
 }
 
-.toast.success { background-color: var(--success); }
-.toast.error { background-color: var(--danger); }
+.toast.success {
+    background-color: var(--success);
+}
+
+.toast.error {
+    background-color: var(--danger);
+}
 
 /* Loading Spinner */
 .loading-spinner {
@@ -470,4 +515,6 @@ input.error {
 }
 
 /* Utilities */
-.hidden { display: none !important; }
+.hidden {
+    display: none !important;
+}
